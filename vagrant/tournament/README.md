@@ -12,4 +12,7 @@ We've used the PostgreSQL database running in a Vagrant virtual machine for this
 4. Execute `vagrant up` to download and install the virtual machine.
 5. Execute `vagrant ssh` to log into the virtual machine.
 6. Once in the virtual machine, `cd` into the `/vagrant/tournament` directory.
-7. Execute `python tournament_test.py` to run the unit tests for each function.
+7. Execute `psql` to launch the PostgreSQL console.
+8. Execute `\i tournament.sql` to run the SQL script which will set up the database.
+9. Execute `\q` to quit the PostgreSQL console.
+10. Execute `python tournament_test.py` to run the unit tests for each function.
