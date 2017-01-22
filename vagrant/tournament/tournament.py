@@ -21,11 +21,7 @@ def deleteMatches():
     """Remove all the match records from the database."""
     DB, c = connect()
     # Delete all match records.
-    c.execute("DELETE FROM match;")
-    # Reset all player stats to 0.
-    c.execute("UPDATE player SET matches = 0 WHERE matches > 0;")
-    c.execute("UPDATE player SET wins = 0 WHERE wins > 0;")
-    c.execute("UPDATE player SET losses = 0 WHERE losses > 0;")
+    c.execute("TRUNCATE match;")
     DB.commit()
     DB.close()
 
@@ -34,7 +30,7 @@ def deletePlayers():
     """Remove all the player records from the database."""
     DB, c = connect()
     # Delete all player records.
-    c.execute("DELETE FROM player;")
+    c.execute("TRUNCATE player CASCADE;")
     DB.commit()
     DB.close()
 
@@ -60,9 +56,9 @@ def registerPlayer(name):
     """
     DB, c = connect()
     # Insert new player with stats defaulted to 0.
-    c.execute("""INSERT INTO player (name, wins, losses, matches)
-                 VALUES (%s, %s, %s, %s);""",
-              (name, 0, 0, 0))
+    query = "INSERT INTO player (name) VALUES (%s);"
+    params = (name,)
+    c.execute(query, params)
     DB.commit()
     DB.close()
 
@@ -82,7 +78,13 @@ def playerStandings():
     """
     DB, c = connect()
     # Retrieve players ordered by most wins first.
-    c.execute("SELECT id, name, wins, matches FROM player ORDER BY wins DESC;")
+    c.execute("""SELECT p.id, p.name,
+                 SUM(CASE WHEN m.winner = p.id THEN 1 ELSE 0 END) AS total_wins,
+                 COUNT(m.id) AS total_matches
+                 FROM player p
+                 LEFT JOIN match m ON p.id IN (m.winner, m.loser)
+                 GROUP BY p.id, p.name;
+             """)
     player_standings = c.fetchall()
     DB.close()
     return player_standings
@@ -97,18 +99,9 @@ def reportMatch(winner, loser):
     """
     DB, c = connect()
     # Insert details of the new match.
-    c.execute("INSERT INTO match (winner, loser) VALUES (%s, %s);",
-              (winner, loser))
-    # Update the stats of the winning player.
-    c.execute("UPDATE player SET wins = wins + 1 WHERE id = %s;",
-              (winner,))
-    c.execute("UPDATE player SET matches = matches + 1 WHERE id = %s;",
-              (winner,))
-    # Update the stats of the losing player.
-    c.execute("UPDATE player SET losses = losses + 1 WHERE id = %s;",
-              (loser,))
-    c.execute("UPDATE player SET matches = matches + 1 WHERE id = %s;",
-              (loser,))
+    query = "INSERT INTO match (winner, loser) VALUES (%s, %s);"
+    params = (winner, loser)
+    c.execute(query, params)
     DB.commit()
     DB.close()
 
@@ -128,30 +121,29 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    DB, c = connect()
-    c.execute("""SELECT a.id, a.name, b.id, b.name
-              FROM player a, player b
-              WHERE a.wins = b.wins
-              AND a.id < b.id
-              ORDER BY a.id, b.id""")
-    all_pairs = c.fetchall()
+    standings = playerStandings()
 
-    registered_player_ids = []
-    registered_players = []
+    pairings = []
+    paired_ids = []
 
-    # Remove repeated players:
-    # Iterate through tuples and add each encountered player ID to an array.
-    # If a tuple is encountered where neither of its players are found in the
-    # ID array, add it as a valid pairing.
-    for tup in all_pairs:
-        if tup[0] not in registered_player_ids and \
-                tup[2] not in registered_players:
-            registered_player_ids.append(tup[0])
-            registered_player_ids.append(tup[2])
-            registered_players.append(tup)
+    for i in standings:
+        for j in standings:
+            p1_id, p2_id = i[0], j[0]
+            p1_name, p2_name = i[1], j[1]
+            p1_wins, p2_wins = i[2], j[2]
+            # check if either player is already registered.
+            if p1_id not in paired_ids and p2_id not in paired_ids:
+                # check number of wins is equal.
+                if p1_wins == p2_wins:
+                    # check that players are unique.
+                    if p1_id != p2_id:
+                        new_pairing = (p1_id, p1_name, p2_id, p2_name)
+                        pairings.append(new_pairing)
+                        paired_ids.append(p1_id)
+                        paired_ids.append(p2_id)
 
-    return registered_players
+    return pairings
 
 
 if __name__ == "__main__":
-    pass
+    swissPairings()
