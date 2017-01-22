@@ -6,13 +6,11 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
--- PLAYER table
--- id (serial) PK
--- wins (int)
--- losses (int)
+-- Drop existing Player table.
+DROP TABLE IF EXISTS player CASCADE;
 
-drop table if exists player cascade;
-create table player(id serial primary key,
+-- Create Player table.
+CREATE TABLE player(id serial PRIMARY KEY,
                     name text,
                     wins int,
                     losses int,
@@ -36,18 +34,24 @@ create table player(id serial primary key,
 -- insert into player (name, wins, losses, matches) values ('Charlotte', 0, 0, 0);
 -- insert into player (name, wins, losses, matches) values ('Stephanie', 0, 0, 0);
 
--- MATCH table
+-- Drop existing Match table.
+DROP TABLE IF EXISTS match CASCADE;
 
--- id (serial) PK
--- player (int) FK
--- winner (int), -1 if tie
-
-drop table if exists match cascade;
-create table match(id serial primary key,
-                   winner int references player(id),
-                   loser int references player(id));
+-- Create Match table.
+CREATE TABLE match(id serial PRIMARY KEY,
+                   winner int REFERENCES player(id),
+                   loser int REFERENCES player(id));
 
 -- insert into match (winner, loser) values (1, 2);
 -- insert into match (winner, loser) values (3, 4);
 -- insert into match (winner, loser) values (5, 6);
 -- insert into match (winner, loser) values (7, 8);
+
+SELECT DISTINCT a.id,
+                a.name,
+                b.id,
+                b.name
+FROM player a,
+     player b
+WHERE abs(a.wins - b.wins) <= 1
+  AND a.id < b.id;

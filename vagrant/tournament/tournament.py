@@ -15,9 +15,9 @@ def deleteMatches():
     """Remove all the match records from the database."""
     DB = connect()
     c = DB.cursor()
-    # delete all match records.
+    # Delete all match records.
     c.execute("DELETE FROM match;")
-    # reset all player stats to 0.
+    # Reset all player stats to 0.
     c.execute("UPDATE player SET matches = 0 WHERE matches > 0;")
     c.execute("UPDATE player SET wins = 0 WHERE wins > 0;")
     c.execute("UPDATE player SET losses = 0 WHERE losses > 0;")
@@ -29,7 +29,7 @@ def deletePlayers():
     """Remove all the player records from the database."""
     DB = connect()
     c = DB.cursor()
-    # delete all player records.
+    # Delete all player records.
     c.execute("DELETE FROM player;")
     DB.commit()
     DB.close()
@@ -39,7 +39,7 @@ def countPlayers():
     """Returns the number of players currently registered."""
     DB = connect()
     c = DB.cursor()
-    # get count of player records.
+    # Get count of player records.
     c.execute("SELECT COUNT(*) FROM player;")
     count = c.fetchone()[0]
     DB.close()
@@ -57,7 +57,7 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    # insert new player with stats defaulted to 0.
+    # Insert new player with stats defaulted to 0.
     c.execute("""INSERT INTO player (name, wins, losses, matches)
                  VALUES (%s, %s, %s, %s);""",
               (name, 0, 0, 0))
@@ -80,7 +80,7 @@ def playerStandings():
     """
     DB = connect()
     c = DB.cursor()
-    # retrieve players ordered by most wins first.
+    # Retrieve players ordered by most wins first.
     c.execute("SELECT id, name, wins, matches FROM player ORDER BY wins DESC;")
     player_standings = c.fetchall()
     DB.close()
@@ -96,15 +96,15 @@ def reportMatch(winner, loser):
     """
     DB = connect()
     c = DB.cursor()
-    # insert details of the new match.
+    # Insert details of the new match.
     c.execute("INSERT INTO match (winner, loser) VALUES (%s, %s);",
               (winner, loser))
-    # update the stats of the winning player.
+    # Update the stats of the winning player.
     c.execute("UPDATE player SET wins = wins + 1 WHERE id = %s;",
               (winner,))
     c.execute("UPDATE player SET matches = matches + 1 WHERE id = %s;",
               (winner,))
-    # update the stats of the losing player.
+    # Update the stats of the losing player.
     c.execute("UPDATE player SET losses = losses + 1 WHERE id = %s;",
               (loser,))
     c.execute("UPDATE player SET matches = matches + 1 WHERE id = %s;",
@@ -128,10 +128,31 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    DB = connect()
+    c = DB.cursor()
+    c.execute("""SELECT a.id, a.name, b.id, b.name
+              FROM player a, player b
+              WHERE a.wins = b.wins
+              AND a.id < b.id
+              ORDER BY a.id, b.id""")
+    all_pairs = c.fetchall()
+
+    registered_player_ids = []
+    registered_players = []
+
+    # Remove repeated players:
+    # Iterate through tuples and add each encountered player ID to an array.
+    # If a tuple is encountered where neither of its players are found in the
+    # ID array, add it as a valid pairing.
+    for tup in all_pairs:
+        if tup[0] not in registered_player_ids and \
+                tup[2] not in registered_players:
+            registered_player_ids.append(tup[0])
+            registered_player_ids.append(tup[2])
+            registered_players.append(tup)
+
+    return registered_players
 
 
 if __name__ == "__main__":
-    # deleteMatches()
-    # print(countPlayers())
-    # registerPlayer("hello")
-    print(playerStandings())
+    pass
