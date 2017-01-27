@@ -6,7 +6,7 @@ from models import categories, items
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template("home.html",
+    return render_template("home_auth.html",
                            curr_category="Latest Items",
                            categories=categories,
                            items=items)

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h2>{{curr_category}}</h2>
+        <ul class="list-group">
+            {% for item in items %}
+                <li class="list-group-item">
+                    <a href="/{{item.category}}/{{item.name}}">
+                        {{item.name}}
+                    </a>
+                    <a href="/{{item.category}}">
+                        <span class="category">{{item.category}}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newItemModal"><span class="glyphicon glyphicon-plus"></span> New Item</button>
+    </div>
+</div>
+
+<!-- New Item Modal -->
+<div class="modal fade" id="newItemModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New Item</h4>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post">
+                    <fieldset>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-btn dropdown">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        {% for category in categories %}
+                                            <li><a href="#">{{category}}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Item Name" name="item-name">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="submit" name="save" class="btn btn-success btn-block" value="Save">
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
