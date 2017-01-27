@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h2>{{curr_category}}</h2>
+        <ul class="list-group">
+            {% for item in items %}
+                <li class="list-group-item">
+                    <a href="/{{item.category}}/{{item.name}}">
+                        {{item.name}}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
