@@ -14,8 +14,10 @@ def index():
 
 @app.route("/<category>")
 def category(category):
-    filtered_items = [{"name": "Goggles", "category": "Snowboarding"},
-                      {"name": "Snowboard", "category": "Snowboarding"}]
+    filtered_items = []
+    for x in items:
+        if x.get("category") == category:
+            filtered_items.append(x)
     return render_template("category_list.html",
                            curr_category=category,
                            categories=categories,
@@ -24,7 +26,10 @@ def category(category):
 
 @app.route("/<category>/<item>")
 def item(category, item):
-    selected_item = {"name": "Stick", "category": "Hockey", "description": "This is the description."}
+    selected_item = None
+    for x in items:
+        if x.get("name") == item:
+            selected_item = x
     return render_template("item.html",
                            item=selected_item,
                            categories=categories)
