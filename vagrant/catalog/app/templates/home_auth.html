@@ -31,22 +31,18 @@
             </div>
             <div class="modal-body">
                 <form action="" method="post">
-                    <fieldset>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <select class="selectpicker" title="Category" name="item-category">
-                                    {% for category in categories %}
-                                        <option data-tokens="{{category}}">{{category}}</option>
-                                    {% endfor %}
-                                </select>
-                                <input type="text" class="form-control" placeholder="Item Name" name="item-name">
-                            </div>
-                            <hr class="colorgraph">
-                            <textarea class="form-control" rows="10" name="item-description" placeholder="Item Description"></textarea>
-                            <hr class="colorgraph">
-                        </div>
-                        <input type="submit" name="save" class="btn btn-success btn-block" value="Add Item">
-                    </fieldset>
+                    <div class="input-group">
+                        <select class="selectpicker" title="Category" name="item-category">
+                            {% for category in categories %}
+                                <option data-tokens="{{category}}">{{category}}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" class="form-control" placeholder="Item Name" name="item-name">
+                    </div>
+                    <hr class="colorgraph">
+                    <textarea class="form-control" rows="10" name="item-description" placeholder="Item Description"></textarea>
+                    <hr class="colorgraph">
+                    <input type="submit" name="save" class="btn btn-success btn-block" value="Add Item">
                 </form>
             </div>
         </div>
