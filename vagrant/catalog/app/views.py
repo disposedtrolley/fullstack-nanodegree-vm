@@ -2,7 +2,7 @@ from flask import render_template, url_for
 from app import app
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from models import Base, Category, Item
+from models import Base, Category, Item, User
 
 
 # Connect to Database and create database session
@@ -39,6 +39,8 @@ def item(category, item):
     categories = session.query(Category).all()
     item = session.query(Item).filter_by(category_name=category,
                                          name=item).first()
+    user = session.query(User).filter_by(id=item.user_id).one()
     return render_template("item_auth.html",
                            item=item,
-                           categories=categories)
+                           categories=categories,
+                           user=user)

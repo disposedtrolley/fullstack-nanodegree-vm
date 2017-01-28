@@ -3,7 +3,12 @@
 {% block content %}
     <h2>{{item.name}}</h2>
     <p>{{item.description}}</p>
-
+    <br>
+    <br>
+    <br>
+    <span class="item-created-by"><img src="{{user.picture}}" class="img-circle special-img">Created by {{user.name}}</span>
+    <br>
+    <br>
     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newItemModal"><span class="glyphicon glyphicon-pencil"></span> Edit Item</button>
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal"><span class="glyphicon glyphicon-trash"></span> Delete Item</button>
 

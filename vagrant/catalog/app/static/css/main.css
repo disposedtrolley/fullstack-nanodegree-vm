@@ -7,3 +7,13 @@
     float: none;
     margin: 0 auto;
 }
+
+
+.item-created-by {
+    color: grey;
+}
+
+.img-circle {
+    max-width: 25px;
+    margin-right: 1em;
+}
