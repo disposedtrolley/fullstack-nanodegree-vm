@@ -6,7 +6,7 @@ from models import Base, Category, Item
 
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///itemcatalog.db')
+engine = create_engine('sqlite:///app/itemcatalog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
