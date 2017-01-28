@@ -1,4 +1,9 @@
 .category {
     float: right;
-    color:  grey;
+    color: grey;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
 }
