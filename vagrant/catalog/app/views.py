@@ -1,11 +1,23 @@
 from flask import render_template, url_for
 from app import app
-from models import categories, items
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+from models import Base, Category, Item
+
+
+# Connect to Database and create database session
+engine = create_engine('sqlite:///itemcatalog.db')
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 
 @app.route('/')
 @app.route('/index')
 def index():
+    categories = session.query(Category).all()
+    items = session.query(Item).all()
     return render_template("home_auth.html",
                            curr_category="Latest Items",
                            categories=categories,
@@ -14,22 +26,19 @@ def index():
 
 @app.route("/<category>")
 def category(category):
-    filtered_items = []
-    for x in items:
-        if x.get("category") == category:
-            filtered_items.append(x)
+    categories = session.query(Category).all()
+    items = session.query(Item).filter_by(category_name=category).all()
     return render_template("category_list.html",
                            curr_category=category,
                            categories=categories,
-                           items=filtered_items)
+                           items=items)
 
 
 @app.route("/<category>/<item>")
 def item(category, item):
-    selected_item = None
-    for x in items:
-        if x.get("name") == item:
-            selected_item = x
+    categories = session.query(Category).all()
+    item = session.query(Item).filter_by(category_name=category,
+                                         name=item).first()
     return render_template("item_auth.html",
-                           item=selected_item,
+                           item=item,
                            categories=categories)

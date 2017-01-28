@@ -7,11 +7,11 @@
         <ul class="list-group">
             {% for item in items %}
                 <li class="list-group-item">
-                    <a href="/{{item.category}}/{{item.name}}">
+                    <a href="/{{item.category_name}}/{{item.name}}">
                         {{item.name}}
                     </a>
-                    <a href="/{{item.category}}">
-                        <span class="category">{{item.category}}</span>
+                    <a href="/{{item.category_name}}">
+                        <span class="category">{{item.category_name}}</span>
                     </a>
                 </li>
             {% endfor %}
@@ -34,7 +34,7 @@
                     <div class="input-group">
                         <select class="selectpicker" title="Category" name="item-category">
                             {% for category in categories %}
-                                <option data-tokens="{{category}}">{{category}}</option>
+                                <option data-tokens="{{category.name}}">{{category.name}}</option>
                             {% endfor %}
                         </select>
                         <input type="text" class="form-control" placeholder="Item Name" name="item-name">

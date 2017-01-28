@@ -7,11 +7,11 @@
         <ul class="list-group">
             {% for item in items %}
                 <li class="list-group-item">
-                    <a href="/{{item.category}}/{{item.name}}">
+                    <a href="/{{item.category_name}}/{{item.name}}">
                         {{item.name}}
                     </a>
-                    <a href="/{{item.category}}">
-                        <span class="category">{{item.category}}</span>
+                    <a href="/{{item.category_name}}">
+                        <span class="category">{{item.category_name}}</span>
                     </a>
                 </li>
             {% endfor %}

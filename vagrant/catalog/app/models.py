@@ -1,19 +1,41 @@
-categories = ["Soccer",
-              "Basketball",
-              "Baseball",
-              "Frisbee",
-              "Snowboarding",
-              "Rock Climbing",
-              "Foosball",
-              "Skating",
-              "Hockey"]
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
 
-items = [{"name": "Stick", "category": "Hockey", "description": "This is the description."},
-         {"name": "Goggles", "category": "Snowboarding", "description": "This is the description."},
-         {"name": "Snowboard", "category": "Snowboarding", "description": "This is the description."},
-         {"name": "Two shinguards", "category": "Soccer", "description": "This is the description."},
-         {"name": "Shinguards", "category": "Soccer", "description": "This is the description."},
-         {"name": "Frisbee", "category": "Frisbee", "description": "This is the description."},
-         {"name": "Bat", "category": "Baseball", "description": "This is the description."},
-         {"name": "Jersey", "category": "Soccer", "description": "This is the description."},
-         {"name": "Soccer Cleats", "category": "Soccer", "description": "This is the description."}]
+Base = declarative_base()
+
+
+class Category(Base):
+    __tablename__ = "category"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+
+    @property
+    def serialize(self):
+        return {
+            "name": self.name,
+            "id": self.id
+        }
+
+
+class Item(Base):
+    __tablename__ = "item"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(500), nullable=False)
+    description = Column(String(2000))
+    category_name = Column(String(250), ForeignKey("category.name"))
+    category = relationship(Category)
+
+    @property
+    def serialize(self):
+        return {
+            "name": self.name,
+            "id": self.id,
+            "category": self.category_name
+        }
+
+engine = create_engine('sqlite:///itemcatalog.db')
+Base.metadata.create_all(engine)
