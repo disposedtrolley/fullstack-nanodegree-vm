@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>{{item.name}}</h2>
+    <p>{{item.description}}</p>
+
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newItemModal"><span class="glyphicon glyphicon-pencil"></span> Edit Item</button>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal"><span class="glyphicon glyphicon-trash"></span> Delete Item</button>
+
+    <!-- Edit Item Modal -->
+    <div class="modal fade" id="newItemModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Item</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post">
+                        <div class="input-group">
+                            <select class="selectpicker" title="Category" name="item-category">
+                                <option selected>{{item.category}}</option>
+                                {% for category in categories if not category == item.category %}
+                                    <option>{{category}}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="text" class="form-control" placeholder="Item Name" name="item-name" value="{{item.name}}">
+                        </div>
+                        <hr class="colorgraph">
+                        <textarea class="form-control" rows="10" name="item-description" placeholder="Item Description">{{item.description}}</textarea>
+                        <hr class="colorgraph">
+                        <input type="submit" name="save" class="btn btn-success btn-block" value="Edit Item">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Item Modal -->
+    <div class="modal fade" id="deleteItemModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Delete Item</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post">
+                        <p>Are you sure you want to delete {{item.name}}?</p>
+                        <hr class="colorgraph">
+                        <input type="submit" name="delete" class="btn btn-danger btn-block" value="Delete Item">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

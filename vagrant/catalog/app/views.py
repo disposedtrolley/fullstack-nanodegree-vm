@@ -30,6 +30,6 @@ def item(category, item):
     for x in items:
         if x.get("name") == item:
             selected_item = x
-    return render_template("item.html",
+    return render_template("item_auth.html",
                            item=selected_item,
                            categories=categories)
