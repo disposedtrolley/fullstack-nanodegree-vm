@@ -34,14 +34,11 @@
                     <fieldset>
                         <div class="form-group">
                             <div class="input-group">
-                                <div class="input-group-btn dropdown">
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                        {% for category in categories %}
-                                            <li><a href="#">{{category}}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                                <select class="selectpicker" title="Category" name="item-category">
+                                    {% for category in categories %}
+                                        <option data-tokens="{{category}}">{{category}}</option>
+                                    {% endfor %}
+                                </select>
                                 <input type="text" class="form-control" placeholder="Item Name" name="item-name">
                             </div>
                             <hr class="colorgraph">
