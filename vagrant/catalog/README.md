@@ -17,3 +17,7 @@ The app uses the Bootstrap front-end framework, and Flask for the back-end. Data
 9. Execute `cd ..` to change into the parent directory.
 10. Execute `python run.py` to run the app.
 11. Browse to `localhost:5000` to use the app
+
+## API endpoints
+
+The app includes a JSON endpoint for viewing item details based on category. This can be accessed at `/<category>/JSON` where `<category>` is the name of the category for which items are to be retrieved. For example, if you want to retrieve details of all items in the `Snowboarding` category, the URL would be `/Snowboarding/JSON`.
