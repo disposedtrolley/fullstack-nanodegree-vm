@@ -1,16 +1,16 @@
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify
 from flask import session as login_session
 from app import app
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base, Category, Item, User
+from app.models import Base, Category, Item, User
 import random
 import string
 import httplib2
 import json
 import requests
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
-from user_helper import *
+from app.user_helper import create_user, get_user_id
 
 
 # allow access to login_session details from templates
@@ -80,9 +80,9 @@ def fbconnect():
     login_session['picture'] = data["data"]["url"]
 
     # see if user exists
-    user_id = getUserID(login_session['email'])
+    user_id = get_user_id(login_session['email'])
     if not user_id:
-        user_id = createUser(login_session)
+        user_id = create_user(login_session)
     login_session['user_id'] = user_id
 
     output = ''
@@ -185,9 +185,9 @@ def gconnect():
     login_session['provider'] = 'google'
 
     # see if user exists, if it doesn't make a new one
-    user_id = getUserID(data["email"])
+    user_id = get_user_id(data["email"])
     if not user_id:
-        user_id = createUser(login_session)
+        user_id = create_user(login_session)
     login_session['user_id'] = user_id
 
     output = ''
