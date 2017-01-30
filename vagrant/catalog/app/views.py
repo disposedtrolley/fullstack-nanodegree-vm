@@ -290,8 +290,7 @@ def index():
         return render_template("home_auth.html",
                                curr_category="Latest Items",
                                categories=categories,
-                               items=items,
-                               authed=True)
+                               items=items)
 
 
 @app.route("/<category>")
@@ -310,15 +309,21 @@ def item(category, item):
     item = session.query(Item).filter_by(category_name=category,
                                          name=item).first()
     user = session.query(User).filter_by(id=item.user_id).one()
-    return render_template("item_auth.html",
-                           item=item,
-                           categories=categories,
-                           user=user)
+    if 'username' not in login_session:
+        return render_template("item.html",
+                               item=item,
+                               categories=categories,
+                               user=user)
+    else:
+        return render_template("item_auth.html",
+                               item=item,
+                               categories=categories,
+                               user=user)
 
 
 @app.route("/newitem", methods=["GET", "POST"])
 def new_item():
-    if request.method == "POST":
+    if request.method == "POST" and "username" in login_session:
         item_category = request.form["item-category"]
         item_name = request.form["item-name"]
         item_description = request.form["item-description"]
@@ -343,7 +348,7 @@ def new_item():
 
 @app.route("/<category>/<item>/edit", methods=["GET", "POST"])
 def edit_item(category, item):
-    if request.method == "POST":
+    if request.method == "POST" and "username" in login_session:
         item_category = request.form["item-category"]
         item_name = request.form["item-name"]
         item_description = request.form["item-description"]
@@ -371,7 +376,7 @@ def edit_item(category, item):
 
 @app.route("/<category>/<item>/delete", methods=["GET", "POST"])
 def delete_item(category, item):
-    if request.method == "POST":
+    if request.method == "POST" and "username" in login_session:
         item_to_delete = session.query(Item).filter_by(category_name=category,
                                                        name=item).one()
         session.delete(item_to_delete)
