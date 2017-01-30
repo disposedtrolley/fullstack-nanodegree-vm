@@ -97,3 +97,17 @@ def edit_item(category, item):
                                     category=item_category, item=item_name))
     else:
         return redirect(url_for("index"))
+
+
+@app.route("/<category>/<item>/delete", methods=["GET", "POST"])
+def delete_item(category, item):
+    if request.method == "POST":
+        item_to_delete = session.query(Item).filter_by(category_name=category,
+                                                       name=item).one()
+        session.delete(item_to_delete)
+        flash("Item %s successfully deleted." % item,
+              "alert-success")
+        session.commit()
+        return redirect(url_for("index"))
+    else:
+        return redirect(url_for("index"))
