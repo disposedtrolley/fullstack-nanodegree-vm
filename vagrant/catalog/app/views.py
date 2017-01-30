@@ -266,7 +266,7 @@ def index():
         the authenticated homepage for those who are.
     """
     categories = session.query(Category).all()
-    items = session.query(Item).all()
+    items = session.query(Item).order_by(Item.created_at.desc()).limit(10).all()
     if 'username' not in login_session:
         return render_template("home.html",
                                curr_category="Latest Items",

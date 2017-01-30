@@ -60,4 +60,4 @@ for item in items:
     session.add(new_item)
     session.commit()
 
-print "added menu items!"
+print "added items!"
