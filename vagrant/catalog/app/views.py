@@ -331,7 +331,7 @@ def new_item():
             new_item = Item(category_name=item_category,
                             name=item_name,
                             description=item_description,
-                            user_id=1)
+                            user_id=login_session["user_id"])
             session.add(new_item)
             flash("New item %s successfully created." % new_item.name,
                   "alert-success")
