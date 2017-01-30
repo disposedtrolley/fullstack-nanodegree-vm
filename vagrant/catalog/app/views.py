@@ -309,7 +309,7 @@ def item(category, item):
     item = session.query(Item).filter_by(category_name=category,
                                          name=item).first()
     user = session.query(User).filter_by(id=item.user_id).one()
-    if "username" in login_session and login_session["username"] == user.name:
+    if "username" in login_session and login_session["user_id"] == user.id:
         return render_template("item_auth.html",
                                item=item,
                                categories=categories,
