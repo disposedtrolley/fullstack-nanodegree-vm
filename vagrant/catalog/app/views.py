@@ -14,6 +14,8 @@ from flask import make_response
 import requests
 from flask import session as login_session
 
+app.jinja_env.globals['LOGIN_SESSION'] = login_session
+
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog"
@@ -194,8 +196,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
-    print "done!"
+    flash("You are now logged in as %s" % login_session['username'], "alert-success")
     return output
 
 # User Helper Functions
@@ -261,10 +262,10 @@ def disconnect():
         del login_session['picture']
         del login_session['user_id']
         del login_session['provider']
-        flash("You have successfully been logged out.")
+        flash("You have successfully been logged out.", "alert-success")
         return redirect(url_for('index'))
     else:
-        flash("You were not logged in")
+        flash("You were not logged in", "alert-danger")
         return redirect(url_for('index'))
 
 
@@ -284,8 +285,7 @@ def index():
         return render_template("home.html",
                                curr_category="Latest Items",
                                categories=categories,
-                               items=items,
-                               authed=False)
+                               items=items)
     else:
         return render_template("home_auth.html",
                                curr_category="Latest Items",

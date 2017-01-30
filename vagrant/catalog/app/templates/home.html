@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {{category}}">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
 <div class="row">
     <div class="col-lg-8 col-centered">
         <h2>{{curr_category}}</h2>
