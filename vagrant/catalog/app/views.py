@@ -355,6 +355,12 @@ def edit_item(category, item):
         if item_category and item_name and item_description:
             edited_item = session.query(Item).filter_by(category_name=category,
                                                         name=item_name).one()
+            if login_session["user_id"] != edited_item.user_id:
+                flash("Items can only be edited by their original creator.",
+                  "alert-danger")
+                return redirect(url_for("item",
+                                        category=item_category,
+                                        item=item_name))
             edited_item.category_name = item_category
             edited_item.name = item_name
             edited_item.description = item_description
@@ -379,6 +385,10 @@ def delete_item(category, item):
     if request.method == "POST" and "username" in login_session:
         item_to_delete = session.query(Item).filter_by(category_name=category,
                                                        name=item).one()
+        if login_session["user_id"] != item_to_delete.user_id:
+            flash("Items can only be deleted by their original creator.",
+                  "alert-danger")
+            return redirect(url_for("index"))
         session.delete(item_to_delete)
         flash("Item %s successfully deleted." % item,
               "alert-success")
