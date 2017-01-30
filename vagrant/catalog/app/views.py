@@ -69,3 +69,31 @@ def new_item():
             return redirect(url_for("index"))
     else:
         return redirect(url_for("index"))
+
+
+@app.route("/<category>/<item>/edit", methods=["GET", "POST"])
+def edit_item(category, item):
+    if request.method == "POST":
+        item_category = request.form["item-category"]
+        item_name = request.form["item-name"]
+        item_description = request.form["item-description"]
+        if item_category and item_name and item_description:
+            edited_item = session.query(Item).filter_by(category_name=category,
+                                                        name=item_name).one()
+            edited_item.category_name = item_category
+            edited_item.name = item_name
+            edited_item.description = item_description
+            session.add(edited_item)
+            flash("Item %s successfully edited." % edited_item.name,
+                  "alert-success")
+            session.commit()
+            return redirect(url_for("item",
+                                    category=item_category, item=item_name))
+        else:
+            flash("""Some fields were left blank.
+                  Please enter the item details again.""",
+                  "alert-danger")
+            return redirect(url_for("item",
+                                    category=item_category, item=item_name))
+    else:
+        return redirect(url_for("index"))
