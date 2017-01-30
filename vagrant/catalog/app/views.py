@@ -247,16 +247,24 @@ def disconnect():
         return redirect(url_for('index'))
 
 
-# Connect to Database and create database session
+# Connect to the database and create the session.
 engine = create_engine('sqlite:///app/itemcatalog.db')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
 @app.route('/')
 def index():
+    """Handler method for the homepage.
+
+    Args:
+        None
+
+    Returns:
+        Renders the public homepage for users who aren't logged in, and
+        the authenticated homepage for those who are.
+    """
     categories = session.query(Category).all()
     items = session.query(Item).all()
     if 'username' not in login_session:
@@ -273,6 +281,14 @@ def index():
 
 @app.route("/<category>")
 def category(category):
+    """Handler method for the category view.
+
+    Args:
+        category (str): the selected category to display items for.
+
+    Returns:
+        Renders a listing of all of the items in the selected category.
+    """
     categories = session.query(Category).all()
     items = session.query(Item).filter_by(category_name=category).all()
     return render_template("category_list.html",
@@ -283,6 +299,15 @@ def category(category):
 
 @app.route("/<category>/<item>")
 def item(category, item):
+    """Handler method for the item page.
+
+    Args:
+        category (str): the category of the selected item.
+        item (str): the name of the selected item.
+    Returns:
+        Renders the public item page for users who aren't logged in, and
+        the authenticated item page for those who are.
+    """
     categories = session.query(Category).all()
     item = session.query(Item).filter_by(category_name=category,
                                          name=item).first()
@@ -301,6 +326,16 @@ def item(category, item):
 
 @app.route("/newitem", methods=["GET", "POST"])
 def new_item():
+    """Handler for creating new items.
+
+    Args:
+        None
+
+    Returns:
+        Renders the homepage with a flash message.
+        Redirects users to the homepage if they attempt to navigate here via a
+        GET request or they are not logged in.
+    """
     if request.method == "POST" and "username" in login_session:
         item_category = request.form["item-category"]
         item_name = request.form["item-name"]
@@ -326,6 +361,16 @@ def new_item():
 
 @app.route("/<category>/<item>/edit", methods=["GET", "POST"])
 def edit_item(category, item):
+    """Handler for editing existing items.
+
+    Args:
+        None
+
+    Returns:
+        Renders the item page with a flash message.
+        Redirects users to the homepage if they attempt to navigate here via a
+        GET request or they are not logged in.
+    """
     if request.method == "POST" and "username" in login_session:
         item_category = request.form["item-category"]
         item_name = request.form["item-name"]
@@ -335,7 +380,7 @@ def edit_item(category, item):
                                                         name=item_name).one()
             if login_session["user_id"] != edited_item.user_id:
                 flash("Items can only be edited by their original creator.",
-                  "alert-danger")
+                      "alert-danger")
                 return redirect(url_for("item",
                                         category=item_category,
                                         item=item_name))
@@ -360,6 +405,17 @@ def edit_item(category, item):
 
 @app.route("/<category>/<item>/delete", methods=["GET", "POST"])
 def delete_item(category, item):
+    """Handler for deleting existing items.
+
+    Args:
+        category (str): the category of the item to delete.
+        item (str): the name of the item to delete.
+
+    Returns:
+        Renders the homepage with a flash message confirming deletion.
+        Redirects users to the homepage if they attempt to navigate here via a
+        GET request or they are not logged in.
+    """
     if request.method == "POST" and "username" in login_session:
         item_to_delete = session.query(Item).filter_by(category_name=category,
                                                        name=item).one()
@@ -377,6 +433,12 @@ def delete_item(category, item):
 @app.route('/<category>/JSON')
 def category_json(category):
     """JSON endpoint for viewing items in a particular category.
+
+    Args:
+        category (str): the category of items to display in JSON format.
+
+    Returns:
+        All of the items in the selected category in JSON format.
     """
     items = session.query(Item).filter_by(
         category_name=category).all()
