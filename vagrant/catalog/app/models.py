@@ -44,6 +44,8 @@ class Item(Base):
     def serialize(self):
         return {
             "name": self.name,
+            "description": self.description,
+            "creator_id": self.user_id,
             "id": self.id,
             "category": self.category_name
         }

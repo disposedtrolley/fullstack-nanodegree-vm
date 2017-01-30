@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, make_response
+from flask import render_template, url_for, flash, redirect, request, make_response, jsonify
 from flask import session as login_session
 from app import app
 from sqlalchemy import create_engine, asc
@@ -372,3 +372,12 @@ def delete_item(category, item):
               "alert-success")
         session.commit()
     return redirect(url_for("index"))
+
+
+@app.route('/<category>/JSON')
+def category_json(category):
+    """JSON endpoint for viewing items in a particular category.
+    """
+    items = session.query(Item).filter_by(
+        category_name=category).all()
+    return jsonify(Item=[i.serialize for i in items])
