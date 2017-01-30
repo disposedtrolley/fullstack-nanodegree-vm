@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {{category}}">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
 <div class="row">
     <div class="col-lg-8 col-centered">
         <h2>{{curr_category}}</h2>
@@ -30,7 +41,7 @@
                 <h4 class="modal-title">New Item</h4>
             </div>
             <div class="modal-body">
-                <form action="" method="post">
+                <form action="/newitem" method="post">
                     <div class="input-group">
                         <select class="selectpicker" title="Category" name="item-category">
                             {% for category in categories %}

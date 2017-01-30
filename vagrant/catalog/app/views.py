@@ -1,4 +1,4 @@
-from flask import render_template, url_for
+from flask import render_template, url_for, flash, redirect, request
 from app import app
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -44,3 +44,28 @@ def item(category, item):
                            item=item,
                            categories=categories,
                            user=user)
+
+
+@app.route("/newitem", methods=["GET", "POST"])
+def new_item():
+    if request.method == "POST":
+        item_category = request.form["item-category"]
+        item_name = request.form["item-name"]
+        item_description = request.form["item-description"]
+        if item_category and item_name and item_description:
+            new_item = Item(category_name=item_category,
+                            name=item_name,
+                            description=item_description,
+                            user_id=1)
+            session.add(new_item)
+            flash("New item %s successfully created." % new_item.name,
+                  "alert-success")
+            session.commit()
+            return redirect(url_for("index"))
+        else:
+            flash("""Some fields were left blank.
+                  Please enter the item details again.""",
+                  "alert-danger")
+            return redirect(url_for("index"))
+    else:
+        return redirect(url_for("index"))

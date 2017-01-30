@@ -48,5 +48,7 @@ class Item(Base):
             "category": self.category_name
         }
 
-engine = create_engine('sqlite:///itemcatalog.db')
-Base.metadata.create_all(engine)
+
+if __name__ == "__main__":
+    engine = create_engine('sqlite:///itemcatalog.db')
+    Base.metadata.create_all(engine)
