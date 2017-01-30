@@ -93,7 +93,7 @@ def fbconnect():
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
 
-    flash("Now logged in as %s" % login_session['username'])
+    flash("Now logged in as %s" % login_session['username'], "alert-success")
     return output
 
 
@@ -265,7 +265,7 @@ def disconnect():
         flash("You have successfully been logged out.", "alert-success")
         return redirect(url_for('index'))
     else:
-        flash("You were not logged in", "alert-danger")
+        flash("You are not logged in", "alert-danger")
         return redirect(url_for('index'))
 
 
