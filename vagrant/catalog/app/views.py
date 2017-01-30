@@ -108,6 +108,4 @@ def delete_item(category, item):
         flash("Item %s successfully deleted." % item,
               "alert-success")
         session.commit()
-        return redirect(url_for("index"))
-    else:
-        return redirect(url_for("index"))
+    return redirect(url_for("index"))
