@@ -1,32 +1,33 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, make_response
+from flask import session as login_session
 from app import app
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from models import Base, Category, Item, User
-
 import random
 import string
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
 import httplib2
 import json
-from flask import make_response
 import requests
-from flask import session as login_session
+from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from user_helper import *
 
+
+# allow access to login_session details from templates
 app.jinja_env.globals['LOGIN_SESSION'] = login_session
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog"
 
-# Create anti-forgery state token
+
 @app.route('/login')
 def showLogin():
+    """Create anti-forgery state token
+    """
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
 
@@ -199,35 +200,11 @@ def gconnect():
     flash("You are now logged in as %s" % login_session['username'], "alert-success")
     return output
 
-# User Helper Functions
-
-
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
-    return user
-
-
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
-
-# DISCONNECT - Revoke a current user's token and reset their login_session
-
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """Revoke a current user's token and reset their login_session
+    """
     # Only disconnect a connected user.
     credentials = login_session.get('credentials')
     if credentials is None:
@@ -247,9 +224,10 @@ def gdisconnect():
         return response
 
 
-# Disconnect based on provider
 @app.route('/disconnect')
 def disconnect():
+    """Disconnect based on provider
+    """
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
